@@ -1,0 +1,454 @@
+{
+  "asOf": "2026-10-19",
+  "model": "Mixed-world MLP, hidden layers 16 and 16, trained on 900 steady and 900 switching histories.",
+  "customers": [
+    {
+      "id": "maya",
+      "name": "Maya",
+      "blurb": "Buys the same oat milk on a steady cycle. The median and the network should agree.",
+      "predictedDays": 24,
+      "medianGap": 28,
+      "timeline": {
+        "customerId": "maya",
+        "name": "Maya",
+        "consent": true,
+        "orders": [
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-04-08"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-05-06"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-06-02"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-07-01"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-07-29"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-08-26"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-09-25"
+          }
+        ],
+        "gaps": [
+          28,
+          27,
+          29,
+          28,
+          28,
+          30
+        ],
+        "medianGap": 28,
+        "daysSinceLast": 24,
+        "dominantSku": "oat",
+        "dominantLabel": "Oat milk 1L",
+        "dominantShare": 1.0,
+        "allowed": [
+          "Oat milk 1L"
+        ]
+      },
+      "planner": {
+        "job": "replenish",
+        "because": "The sequence model says the usual product is due now."
+      },
+      "policy": {
+        "action": "send",
+        "reason": "Consented, and not in the holdout.",
+        "propensity": 0.8
+      },
+      "draft": "Your Oat milk 1L from 2026-09-25 usually lasts about 3 weeks. Same again?",
+      "critic": {
+        "accepted": true,
+        "reasons": [
+          "Every product and date is in the timeline."
+        ]
+      },
+      "poisonedDraft": {
+        "accepted": false,
+        "reasons": [
+          "Names Wool coat, which is not in this timeline.",
+          "Does not use the product from the latest order.",
+          "Does not use the latest order date.",
+          "Adds an offer that was not in the brief."
+        ]
+      },
+      "reply": {
+        "label": "buy",
+        "text": "Same again."
+      },
+      "memory": "Reply labeled buy. Next action is a reorder link, then the loop stops."
+    },
+    {
+      "id": "sam",
+      "name": "Sam",
+      "blurb": "Alternates between two coffees, so neither product reaches 60% of the history. The planner stays quiet.",
+      "predictedDays": 27,
+      "medianGap": 22,
+      "timeline": {
+        "customerId": "sam",
+        "name": "Sam",
+        "consent": true,
+        "orders": [
+          {
+            "sku": "house",
+            "label": "House blend 250g",
+            "date": "2026-04-29"
+          },
+          {
+            "sku": "house",
+            "label": "House blend 250g",
+            "date": "2026-05-21"
+          },
+          {
+            "sku": "decaf",
+            "label": "Decaf 250g",
+            "date": "2026-06-30"
+          },
+          {
+            "sku": "decaf",
+            "label": "Decaf 250g",
+            "date": "2026-07-21"
+          },
+          {
+            "sku": "house",
+            "label": "House blend 250g",
+            "date": "2026-09-02"
+          },
+          {
+            "sku": "decaf",
+            "label": "Decaf 250g",
+            "date": "2026-09-22"
+          }
+        ],
+        "gaps": [
+          22,
+          40,
+          21,
+          43,
+          20
+        ],
+        "medianGap": 22,
+        "daysSinceLast": 27,
+        "dominantSku": "house",
+        "dominantLabel": "House blend 250g",
+        "dominantShare": 0.5,
+        "allowed": [
+          "Decaf 250g",
+          "House blend 250g"
+        ]
+      },
+      "planner": {
+        "job": "stay_quiet",
+        "because": "No single product is at least 60% of the history."
+      },
+      "policy": {
+        "action": "no_send",
+        "reason": "Planner chose stay quiet.",
+        "propensity": 0
+      },
+      "draft": "",
+      "critic": {
+        "accepted": true,
+        "reasons": [
+          "No draft, because the planner stayed quiet."
+        ]
+      },
+      "poisonedDraft": {
+        "accepted": false,
+        "reasons": [
+          "Names Wool coat, which is not in this timeline.",
+          "Does not use the product from the latest order.",
+          "Does not use the latest order date.",
+          "Adds an offer that was not in the brief."
+        ]
+      },
+      "reply": {
+        "label": "none",
+        "text": "No message was sent, so there is no reply."
+      },
+      "memory": "Stayed quiet. No training row for uplift, because there was no eligible action."
+    },
+    {
+      "id": "noor",
+      "name": "Noor",
+      "blurb": "Fashion purchases with no repeated product. The planner should refuse a replenishment conversation.",
+      "predictedDays": 60,
+      "medianGap": 108,
+      "timeline": {
+        "customerId": "noor",
+        "name": "Noor",
+        "consent": true,
+        "orders": [
+          {
+            "sku": "linen",
+            "label": "Linen shirt",
+            "date": "2025-10-11"
+          },
+          {
+            "sku": "coat",
+            "label": "Wool coat",
+            "date": "2026-01-27"
+          },
+          {
+            "sku": "tote",
+            "label": "Canvas tote",
+            "date": "2026-05-01"
+          },
+          {
+            "sku": "scarf",
+            "label": "Silk scarf",
+            "date": "2026-08-30"
+          }
+        ],
+        "gaps": [
+          108,
+          94,
+          121
+        ],
+        "medianGap": 108,
+        "daysSinceLast": 50,
+        "dominantSku": "linen",
+        "dominantLabel": "Linen shirt",
+        "dominantShare": 0.25,
+        "allowed": [
+          "Canvas tote",
+          "Linen shirt",
+          "Silk scarf",
+          "Wool coat"
+        ]
+      },
+      "planner": {
+        "job": "stay_quiet",
+        "because": "No single product is at least 60% of the history."
+      },
+      "policy": {
+        "action": "no_send",
+        "reason": "Planner chose stay quiet.",
+        "propensity": 0
+      },
+      "draft": "",
+      "critic": {
+        "accepted": true,
+        "reasons": [
+          "No draft, because the planner stayed quiet."
+        ]
+      },
+      "poisonedDraft": {
+        "accepted": false,
+        "reasons": [
+          "Does not use the product from the latest order.",
+          "Does not use the latest order date.",
+          "Adds an offer that was not in the brief."
+        ]
+      },
+      "reply": {
+        "label": "none",
+        "text": "No message was sent, so there is no reply."
+      },
+      "memory": "Stayed quiet. No training row for uplift, because there was no eligible action."
+    },
+    {
+      "id": "priya",
+      "name": "Priya",
+      "blurb": "Same kind of history as Maya, assigned to the holdout so her purchases can be compared later.",
+      "predictedDays": 24,
+      "medianGap": 28,
+      "timeline": {
+        "customerId": "priya",
+        "name": "Priya",
+        "consent": true,
+        "orders": [
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-04-08"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-05-06"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-06-04"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-07-01"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-07-29"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-08-28"
+          },
+          {
+            "sku": "oat",
+            "label": "Oat milk 1L",
+            "date": "2026-09-25"
+          }
+        ],
+        "gaps": [
+          28,
+          29,
+          27,
+          28,
+          30,
+          28
+        ],
+        "medianGap": 28,
+        "daysSinceLast": 24,
+        "dominantSku": "oat",
+        "dominantLabel": "Oat milk 1L",
+        "dominantShare": 1.0,
+        "allowed": [
+          "Oat milk 1L"
+        ]
+      },
+      "planner": {
+        "job": "replenish",
+        "because": "The sequence model says the usual product is due now."
+      },
+      "policy": {
+        "action": "holdout",
+        "reason": "Assigned to the 20% holdout. The message is stored and not sent.",
+        "propensity": 0.2
+      },
+      "draft": "Your Oat milk 1L from 2026-09-25 usually lasts about 3 weeks. Same again?",
+      "critic": {
+        "accepted": true,
+        "reasons": [
+          "Every product and date is in the timeline."
+        ]
+      },
+      "poisonedDraft": {
+        "accepted": false,
+        "reasons": [
+          "Names Wool coat, which is not in this timeline.",
+          "Does not use the product from the latest order.",
+          "Does not use the latest order date.",
+          "Adds an offer that was not in the brief."
+        ]
+      },
+      "reply": {
+        "label": "none",
+        "text": "No message was sent, so there is no reply."
+      },
+      "memory": "Logged as holdout with propensity 0.2. No message. This row can train the uplift model later."
+    },
+    {
+      "id": "jon",
+      "name": "Jon",
+      "blurb": "Due for a repeat, but there is no current consent, so the policy suppresses the send.",
+      "predictedDays": 26,
+      "medianGap": 29,
+      "timeline": {
+        "customerId": "jon",
+        "name": "Jon",
+        "consent": false,
+        "orders": [
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-05-01"
+          },
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-05-31"
+          },
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-06-28"
+          },
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-07-29"
+          },
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-08-25"
+          },
+          {
+            "sku": "filters",
+            "label": "Filter papers",
+            "date": "2026-09-23"
+          }
+        ],
+        "gaps": [
+          30,
+          28,
+          31,
+          27,
+          29
+        ],
+        "medianGap": 29,
+        "daysSinceLast": 26,
+        "dominantSku": "filters",
+        "dominantLabel": "Filter papers",
+        "dominantShare": 1.0,
+        "allowed": [
+          "Filter papers"
+        ]
+      },
+      "planner": {
+        "job": "replenish",
+        "because": "The sequence model says the usual product is due now."
+      },
+      "policy": {
+        "action": "suppress",
+        "reason": "No current consent to email.",
+        "propensity": 0
+      },
+      "draft": "Your Filter papers from 2026-09-23 usually lasts about 4 weeks. Same again?",
+      "critic": {
+        "accepted": true,
+        "reasons": [
+          "Every product and date is in the timeline."
+        ]
+      },
+      "poisonedDraft": {
+        "accepted": false,
+        "reasons": [
+          "Names Wool coat, which is not in this timeline.",
+          "Does not use the product from the latest order.",
+          "Does not use the latest order date.",
+          "Adds an offer that was not in the brief."
+        ]
+      },
+      "reply": {
+        "label": "none",
+        "text": "No message was sent, so there is no reply."
+      },
+      "memory": "Suppressed for missing consent. Nothing is logged as a treatment."
+    }
+  ]
+}

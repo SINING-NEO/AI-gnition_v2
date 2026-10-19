@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retention agent — workflow</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e0d6c6;
+      --card: #fffdf8;
+      --green: #1d6b4a;
+      --green-soft: #e6f3ec;
+      --clay: #8f3d2b;
+      --clay-soft: #f8ebe6;
+      --gold: #8a6420;
+      --gold-soft: #f6efdc;
+      --quiet: #3d4a5c;
+      --quiet-soft: #e8edf3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+    header, main { width: min(880px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 32px 0 8px; }
+    .kicker { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+    h1, h2 { font-family: Georgia, "Iowan Old Style", Palatino, serif; font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 40px; line-height: 1.08; margin: 0 0 12px; }
+    a { color: var(--green); }
+    .lede { font-size: 19px; max-width: 62ch; }
+    .back { font-size: 14px; }
+    .people { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; }
+    .people button {
+      font: inherit;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .people button.active { border-color: var(--green); box-shadow: inset 0 -2px 0 var(--green); }
+    .outcome { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; }
+    .flow { display: flex; flex-direction: column; gap: 0; margin: 8px 0 36px; }
+    .node { display: grid; grid-template-columns: 28px 1fr; gap: 12px; }
+    .rail { display: flex; flex-direction: column; align-items: center; }
+    .dot { width: 14px; height: 14px; border-radius: 99px; margin-top: 16px; background: var(--line); }
+    .stem { width: 2px; flex: 1; background: var(--line); min-height: 12px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin: 6px 0; }
+    .node.pass .dot { background: var(--green); }
+    .node.stop .dot, .node.stop .card { background: var(--clay-soft); }
+    .node.branch .dot { background: var(--gold); }
+    .node.branch .card { background: var(--gold-soft); }
+    .node.skip { opacity: 0.45; }
+    .card h2 { font-family: "Segoe UI", sans-serif; font-size: 16px; font-weight: 650; margin: 0 0 4px; }
+    .why { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
+    .mark { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green); }
+    .node.stop .mark { color: var(--clay); }
+    .node.branch .mark { color: var(--gold); }
+    .node.skip .mark { color: var(--quiet); }
+    footer { width: min(880px, calc(100% - 32px)); margin: 0 auto 32px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Workflow · same five synthetic customers</p>
+    <h1>Predict the gap. Send the email only if every gate passes.</h1>
+    <p class="lede">The network answers “how many days until they buy this again?” The workflow around it decides whether an email is allowed. Pick a person to see where they pass, where they stop, and which later steps never run.</p>
+    <p class="back"><a href="index.html">Back to the explainer</a></p>
+    <div class="people" id="people"></div>
+  </header>
+  <main>
+    <div class="outcome" id="outcome"></div>
+    <div class="flow" id="flow"></div>
+  </main>
+  <footer>Gates match <code>prototype/agent_loop.py</code>. A grey step was not reached for this person.</footer>
+  <script src="trace.js"></script>
+  <script>
+    const MARK = { pass: "Passed", stop: "Stops here", branch: "Branch", skip: "Not reached" };
+
+    function node(state, title, detail, why) {
+      return { state, title, detail, why };
+    }
+
+    function traceOf(customer) {
+      const timeline = customer.timeline;
+      const count = timeline.orders.length;
+      const share = timeline.dominantShare;
+      const predicted = customer.predictedDays;
+      const until = predicted - timeline.daysSinceLast;
+      const enough = count >= 4;
+      const usual = share >= 0.6;
+      const band = predicted >= 14 && predicted <= 45;
+      const due = until >= -2 && until <= 5;
+      const lapse = timeline.daysSinceLast > timeline.medianGap * 1.4;
+      const jobOk = enough && usual && band && (due || lapse);
+      const action = customer.policy.action;
+      const steps = [
+        node("pass", "1. Read the timeline",
+          count + " orders. Last product: " + timeline.orders[count - 1].label + " on " + timeline.orders[count - 1].date + ".",
+          "The email is only allowed to mention a purchase the shop already recorded."),
+        node("pass", "2. Predict the next gap",
+          "Network: " + predicted + " days. This person’s median gap: " + customer.medianGap + " days. Days since last order: " + timeline.daysSinceLast + ".",
+          "This is the prediction. It does not send the email."),
+      ];
+
+      steps.push(node(enough ? "pass" : "stop", "3. At least 4 orders?",
+        enough ? count + " orders, so the habit can be estimated." : "Only " + count + " orders.",
+        "One or two purchases are not a cycle yet."));
+
+      steps.push(node(!enough ? "skip" : usual ? "pass" : "stop", "4. One product is at least 60% of orders?",
+        !enough ? "Not reached." : timeline.dominantLabel + " is " + Math.round(share * 100) + "% of orders.",
+        "Without a usual product, the email would be guessing."));
+
+      const reachedBand = enough && usual;
+      steps.push(node(!reachedBand ? "skip" : band ? "pass" : "stop", "5. Is the gap 14 to 45 days?",
+        !reachedBand ? "Not reached." : predicted + " days.",
+        "That range is a consumable running out. A once-a-year purchase is a different conversation."));
+
+      const reachedDue = reachedBand && band;
+      let dueState = "skip";
+      let dueDetail = "Not reached.";
+      if (reachedDue && due) {
+        dueState = "pass";
+        dueDetail = "Due now. Job: replenish.";
+      } else if (reachedDue && lapse) {
+        dueState = "pass";
+        dueDetail = "Not on the predicted day, but quiet longer than their own median. Job: lapse.";
+      } else if (reachedDue) {
+        dueState = "stop";
+        dueDetail = "Not due yet. Job: stay quiet.";
+      }
+      steps.push(node(dueState, "6. Are they due now?", dueDetail,
+        "Write when this person’s own cycle says the product is due, not on a fixed day for everyone."));
+
+      const reachedConsent = jobOk;
+      steps.push(node(!reachedConsent ? "skip" : timeline.consent ? "pass" : "stop", "7. Have they agreed to email?",
+        !reachedConsent ? "Not reached." : timeline.consent ? "Consent is current." : "No current consent. The draft may exist, but it is not sent.",
+        "A correct prediction is not permission to write."));
+
+      let holdState = "skip";
+      let holdDetail = "Not reached.";
+      if (reachedConsent && timeline.consent && action === "holdout") {
+        holdState = "branch";
+        holdDetail = "Assigned to the 20% who are not emailed. The draft is kept for the comparison.";
+      } else if (reachedConsent && timeline.consent && action === "send") {
+        holdState = "pass";
+        holdDetail = "Not in the holdout. Propensity stored: 0.8.";
+      }
+      steps.push(node(holdState, "8. Holdout coin", holdDetail,
+        "Some eligible people must get no email, or a later purchase cannot be credited to the message."));
+
+      const wrote = action !== "no_send";
+      steps.push(node(!wrote ? "skip" : "pass", "9. Write one sentence from the last order",
+        wrote ? (customer.draft || "No sentence.") : "Not reached.",
+        "The sentence uses the product, the date, and the predicted cycle. It does not invent an offer."));
+
+      steps.push(node(!wrote ? "skip" : customer.critic.accepted ? "pass" : "stop", "10. Critic",
+        !wrote ? "Not reached." : customer.critic.reasons.join(" "),
+        "If the sentence names a product, a date, or a discount that was not in the brief, it is rejected."));
+
+      let deliverState = "skip";
+      let deliverDetail = "Not reached.";
+      if (action === "send" && customer.critic.accepted) {
+        deliverState = "pass";
+        deliverDetail = "Email is sent. Reply: “" + customer.reply.text + "”";
+      } else if (action === "holdout") {
+        deliverState = "branch";
+        deliverDetail = "Not sent. Stored as a holdout.";
+      } else if (action === "suppress") {
+        deliverState = "stop";
+        deliverDetail = "Not sent. Missing consent.";
+      } else if (action === "no_send") {
+        deliverState = "skip";
+        deliverDetail = "Not sent. An earlier gate already ended this path.";
+      }
+      steps.push(node(deliverState, "11. Deliver", deliverDetail,
+        "Only a consented person, outside the holdout, with an accepted sentence, receives the email."));
+
+      steps.push(node("pass", "12. Log what happened", customer.memory,
+        "This row is what a later test uses: did the people who were emailed buy again more often than the holdout?"));
+
+      return steps;
+    }
+
+    function draw(id) {
+      const customer = window.TRACE.customers.find((item) => item.id === id);
+      document.querySelectorAll(".people button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.id === id);
+      });
+      document.getElementById("outcome").innerHTML =
+        "<strong>" + customer.name + ".</strong> " + customer.blurb;
+      document.getElementById("flow").innerHTML = traceOf(customer).map((step, index, all) => `
+        <div class="node ${step.state}">
+          <div class="rail"><div class="dot"></div>${index < all.length - 1 ? "<div class=\"stem\"></div>" : ""}</div>
+          <article class="card">
+            <div class="mark">${MARK[step.state]}</div>
+            <h2>${step.title}</h2>
+            <p>${step.detail}</p>
+            <p class="why">${step.why}</p>
+          </article>
+        </div>`).join("");
+    }
+
+    const people = document.getElementById("people");
+    people.innerHTML = window.TRACE.customers.map((customer) =>
+      `<button type="button" data-id="${customer.id}">${customer.name}</button>`).join("");
+    people.addEventListener("click", (event) => {
+      const button = event.target.closest("button");
+      if (!button) return;
+      history.replaceState(null, "", "#" + button.dataset.id);
+      draw(button.dataset.id);
+    });
+    const fromHash = location.hash.replace("#", "");
+    const initial = window.TRACE.customers.some((item) => item.id === fromHash) ? fromHash : "maya";
+    draw(initial);
+  </script>
+</body>
+</html>

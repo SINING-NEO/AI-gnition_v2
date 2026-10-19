@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retention agent — prototype</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e0d6c6;
+      --card: #fffdf8;
+      --green: #1d6b4a;
+      --green-soft: #e6f3ec;
+      --clay: #8f3d2b;
+      --clay-soft: #f8ebe6;
+      --gold: #8a6420;
+      --gold-soft: #f6efdc;
+      --quiet: #3d4a5c;
+      --quiet-soft: #e8edf3;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    header, main { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 36px 0 8px; }
+    .kicker {
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+    h1, h2, h3 { font-family: Georgia, "Iowan Old Style", Palatino, serif; font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 46px; line-height: 1.05; margin: 0 0 14px; }
+    h2 { font-size: 30px; margin: 0 0 10px; }
+    h3 { font-size: 20px; margin: 0 0 6px; }
+    p { margin: 0 0 12px; }
+    a { color: var(--green); }
+    .lede { font-size: 20px; max-width: 68ch; }
+    .muted { color: var(--muted); }
+    section { padding: 28px 0 8px; }
+    .rule { border: 0; border-top: 1px solid var(--line); margin: 28px 0; }
+    nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+    nav.toc a {
+      text-decoration: none;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    .status {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .status article, .card, .person, .step, .letter, .block {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .status article { padding: 14px 16px 16px; }
+    .status h3 { font-family: "Segoe UI", sans-serif; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 650; }
+    .status ul { margin: 0; padding-left: 18px; }
+    .status li { margin: 4px 0; }
+    .now { box-shadow: inset 3px 0 0 var(--green); }
+    .grid-2 { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 22px; align-items: start; }
+    .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; }
+    .block { padding: 12px; min-height: 118px; }
+    .block b { display: block; font-size: 14px; margin-bottom: 4px; }
+    .block span { color: var(--muted); font-size: 14px; }
+    .lab { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; }
+    .people { display: flex; flex-direction: column; gap: 8px; }
+    .person {
+      text-align: left;
+      padding: 12px;
+      cursor: pointer;
+      color: inherit;
+      font: inherit;
+      width: 100%;
+    }
+    .person.active { border-color: var(--green); box-shadow: inset 3px 0 0 var(--green); }
+    .person strong { display: block; }
+    .person small { color: var(--muted); display: block; margin-top: 4px; }
+    .tag {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+    .tag.send { background: var(--green-soft); color: var(--green); }
+    .tag.holdout { background: var(--gold-soft); color: var(--gold); }
+    .tag.suppress { background: var(--clay-soft); color: var(--clay); }
+    .tag.no_send { background: var(--quiet-soft); color: var(--quiet); }
+    .steps { display: flex; flex-direction: column; gap: 8px; }
+    .step { padding: 12px 14px; }
+    .step h3 { font-family: "Segoe UI", sans-serif; font-size: 14px; font-weight: 650; }
+    .step .idx { color: var(--green); margin-right: 6px; }
+    .orders { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { background: var(--paper); border-radius: 8px; padding: 4px 8px; font-size: 13px; }
+    .bars { display: grid; gap: 8px; margin-top: 8px; }
+    .bar-row { display: grid; grid-template-columns: 148px 1fr 52px; gap: 8px; align-items: center; font-size: 14px; }
+    .track { background: #efe8da; height: 10px; border-radius: 99px; }
+    .fill { height: 10px; border-radius: 99px; background: var(--green); }
+    .fill.alt { background: var(--gold); }
+    .letter { padding: 16px 16px 14px; margin-top: 8px; }
+    .letter .from { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .reply { margin-top: 8px; padding-left: 12px; border-left: 3px solid var(--green); }
+    .warn { margin-top: 8px; padding: 10px 12px; background: var(--clay-soft); border-radius: 10px; font-size: 14px; }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .chart { display: grid; gap: 10px; }
+    .chart .bar-row { grid-template-columns: 170px 1fr 64px; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 15px; }
+    th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 650; }
+    .glossary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px; }
+    .glossary h3 { font-family: "Segoe UI", sans-serif; font-size: 15px; font-weight: 650; }
+    footer { width: min(1080px, calc(100% - 32px)); margin: 10px auto 40px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 860px) {
+      h1 { font-size: 36px; }
+      .status, .grid-2, .lab, .metrics, .glossary, .flow { grid-template-columns: 1fr; }
+      .bar-row, .chart .bar-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Prototype · synthetic customers · 19 Oct 2026</p>
+    <h1>A retention agent that only says what the orders can prove.</h1>
+    <p class="lede">Customer histories go in. A small neural net estimates when the next purchase is due. An agent decides whether to write, and a critic throws the message away if it invents a product.</p>
+    <nav class="toc">
+      <a href="#status">Where this is</a>
+      <a href="#system">The system</a>
+      <a href="workflow.html">Workflow</a>
+      <a href="#lab">Walk a customer</a>
+      <a href="#evidence">What we measured</a>
+      <a href="#words">Words</a>
+    </nav>
+  </header>
+  <main>
+    <section id="status">
+      <h2>Where this is</h2>
+      <p class="muted">Feasibility is done on synthetic data. The prototype below is the first time the pieces run as one loop. Nothing has been emailed to a real person.</p>
+      <div class="status">
+        <article>
+          <h3>Done</h3>
+          <ul>
+            <li>A filter that tells a consumable catalogue from a fashion-like one.</li>
+            <li>A sequence network that beats a median-gap rule when recent products change the timing.</li>
+            <li>A critic that rejects products the customer never bought.</li>
+          </ul>
+        </article>
+        <article class="now">
+          <h3>This prototype</h3>
+          <ul>
+            <li>Five synthetic people walk the full loop.</li>
+            <li>Send, holdout, missing consent, and stay-quiet each happen once or twice.</li>
+            <li>Replies are scripted: buy, or later.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Not built yet</h3>
+          <ul>
+            <li>A real order export.</li>
+            <li>A live language model in the writer seat.</li>
+            <li>The uplift model. It needs the holdout log this loop is designed to write.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section id="system">
+      <h2>The system, in one pass</h2>
+      <div class="grid-2">
+        <div>
+          <p>Deep learning here is the score: given this person’s past orders, how many days until they buy again? The agent is the procedure around that score. It calls tools, picks one job, and stops when a reply or a rule says to stop.</p>
+          <p>The language model, when we add one, only writes the sentence and reads the reply. It does not choose who is contacted. That choice has to stay random for a slice of people, or we can never learn whether the message caused the purchase.</p>
+        </div>
+        <div>
+          <p class="muted">Ordinary code still owns two gates: consent, and the holdout coin. A fluent model is the wrong place for either decision.</p>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="block"><b>1 · Timeline</b><span>Orders, dates, consent. No new questions asked of the customer.</span></div>
+        <div class="block"><b>2 · Sequence model</b><span>A two-layer network reads the last two products and the gaps, and predicts days.</span></div>
+        <div class="block"><b>3 · Planner</b><span>One job only: replenish, lapse, or stay quiet.</span></div>
+        <div class="block"><b>4 · Policy</b><span>Consent check, then a 20% holdout. The probability is stored.</span></div>
+        <div class="block"><b>5 · Writer</b><span>One sentence from the brief. The prototype uses a template, not a live model.</span></div>
+        <div class="block"><b>6 · Critic</b><span>Every product and date in the sentence must be in the timeline.</span></div>
+        <div class="block"><b>7 · Reply</b><span>Buy, later, or stop. Scripted in this prototype.</span></div>
+        <div class="block"><b>8 · Memory</b><span>The row waits for a purchase within 14 days, which is what an uplift model will train on.</span></div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section id="lab">
+      <h2>Walk a customer through it</h2>
+      <p class="muted">These five people were generated, then scored by the trained network. Pick one. The panel is that person’s actual trace from <code>prototype/agent_loop.py</code>.</p>
+      <div class="lab">
+        <div class="people" id="people"></div>
+        <div class="steps" id="steps"></div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section id="evidence">
+      <h2>What we measured before this loop</h2>
+      <div class="metrics">
+        <div>
+          <h3>Days of error predicting the next gap</h3>
+          <p class="muted">Lower is better. 400 held-out synthetic customers in each world. The network is a stand-in for a larger sequence model: if this small net cannot beat the median, a transformer does not get the job.</p>
+          <div class="chart" id="error-chart"></div>
+        </div>
+        <div>
+          <h3>Who even qualifies for replenishment</h3>
+          <p class="muted">A regular gap is a weak test. Requiring a repeated product and a 14–45 day cycle separates the two catalogues.</p>
+          <div class="chart" id="fit-chart"></div>
+        </div>
+      </div>
+      <p class="muted" style="margin-top:14px">Sources: <code>feasibility/sequence_model.py</code> and <code>feasibility/replenishment.mjs</code>, seed 19. The critic in that probe rejected 214 of 214 invented products and kept all 186 real ones.</p>
+    </section>
+
+    <hr class="rule" />
+
+    <section id="words">
+      <h2>The words on this page</h2>
+      <div class="glossary">
+        <div>
+          <h3>Sequence model</h3>
+          <p class="muted">A network trained on past orders to predict the next gap. This prototype uses two hidden layers of 16 units. It sees the last two products, whether they match, the last gap, and the person’s median gap.</p>
+        </div>
+        <div>
+          <h3>Agent</h3>
+          <p class="muted">The loop that calls the timeline, the model, the writer, and the critic, then updates memory from the reply. The model scores. The agent acts.</p>
+        </div>
+        <div>
+          <h3>Critic</h3>
+          <p class="muted">A checker, not a second writer. If the sentence names a product or a date the timeline tool did not return, or adds a discount, the draft is rejected.</p>
+        </div>
+        <div>
+          <h3>Holdout</h3>
+          <p class="muted">A random slice of eligible people who get no message. Their later purchases are the comparison that tells us whether writing caused the repeat buy.</p>
+        </div>
+        <div>
+          <h3>Uplift model</h3>
+          <p class="muted">A later network with two heads: chance they buy if we write, and chance they buy if we do not. It cannot be trained until this loop has logged both kinds of decision.</p>
+        </div>
+        <div>
+          <h3>Propensity</h3>
+          <p class="muted">The probability the policy used when it assigned send or holdout. Storing it is what makes the later uplift training valid.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Synthetic data only. As-of date 19 Oct 2026. Open this file beside <code>trace.js</code>. Regenerate both with <code>python prototype/agent_loop.py</code>.
+  </footer>
+  <script src="trace.js"></script>
+  <script>
+    const ACTION_LABEL = { send: "Send", holdout: "Holdout", suppress: "Suppressed", no_send: "Stay quiet" };
+
+    function bar(label, value, max, alt, display) {
+      const pct = value <= 0 ? 0 : Math.max(4, Math.round((value / max) * 100));
+      const shown = display == null ? value : display;
+      return `<div class="bar-row"><span>${label}</span><div class="track"><div class="fill${alt ? " alt" : ""}" style="width:${pct}%"></div></div><span>${shown}</span></div>`;
+    }
+
+    function orders(list) {
+      return `<div class="orders">${list.map((order) => `<span class="chip">${order.date} · ${order.label}</span>`).join("")}</div>`;
+    }
+
+    function renderPerson(customer) {
+      const action = customer.policy.action;
+      return `<button class="person" data-id="${customer.id}" type="button">
+        <strong>${customer.name}</strong>
+        <small>${customer.blurb}</small>
+        <span class="tag ${action}">${ACTION_LABEL[action]}</span>
+      </button>`;
+    }
+
+    function letter(customer) {
+      if (!customer.draft) {
+        return `<p>No sentence was written for sending. ${customer.policy.reason}</p>`;
+      }
+      const held = customer.policy.action !== "send";
+      return `<div class="letter">
+        <div class="from">${held ? "Draft stored, not sent" : "Email draft"} · ${customer.name}</div>
+        <p>${customer.draft}</p>
+      </div>
+      ${held ? `<p class="muted">${customer.policy.reason}</p>` : `<div class="reply"><strong>Reply · ${customer.reply.label}</strong><p>${customer.reply.text}</p></div>`}`;
+    }
+
+    function renderSteps(customer) {
+      const t = customer.timeline;
+      const poison = customer.poisonedDraft.reasons.map((reason) => `<div>${reason}</div>`).join("");
+      document.getElementById("steps").innerHTML = `
+        <article class="step"><h3><span class="idx">1</span>Timeline tool</h3>
+          <p>${t.orders.length} orders. Dominant product ${t.dominantLabel} (${Math.round(t.dominantShare * 100)}%). Consent: ${t.consent ? "yes" : "no"}.</p>
+          ${orders(t.orders)}
+        </article>
+        <article class="step"><h3><span class="idx">2</span>Sequence model</h3>
+          <p>Predicts ${customer.predictedDays} days until the next purchase. This person’s median gap is ${customer.medianGap} days. Last order was ${t.daysSinceLast} days ago.</p>
+          <div class="bars">
+            ${bar("Sequence model", customer.predictedDays, 120, false, customer.predictedDays + " days")}
+            ${bar("Personal median", customer.medianGap, 120, true, customer.medianGap + " days")}
+          </div>
+        </article>
+        <article class="step"><h3><span class="idx">3</span>Planner</h3>
+          <p><strong>${customer.planner.job.replace("_", " ")}</strong>. ${customer.planner.because}</p>
+        </article>
+        <article class="step"><h3><span class="idx">4</span>Policy</h3>
+          <p><strong>${ACTION_LABEL[customer.policy.action]}</strong>. ${customer.policy.reason} Propensity stored: ${customer.policy.propensity}.</p>
+        </article>
+        <article class="step"><h3><span class="idx">5</span>Writer</h3>
+          ${letter(customer)}
+        </article>
+        <article class="step"><h3><span class="idx">6</span>Critic</h3>
+          <p>${customer.critic.accepted ? "Accepted." : "Rejected."} ${customer.critic.reasons.join(" ")}</p>
+          <div class="warn"><strong>A poisoned draft is rejected.</strong> “Your Wool coat from 2026-01-01 is due. 20% off.” ${poison}</div>
+        </article>
+        <article class="step"><h3><span class="idx">7</span>Reply</h3>
+          <p>${customer.reply.text}</p>
+        </article>
+        <article class="step"><h3><span class="idx">8</span>Memory</h3>
+          <p>${customer.memory}</p>
+        </article>`;
+    }
+
+    function select(id) {
+      const customer = window.TRACE.customers.find((item) => item.id === id);
+      document.querySelectorAll(".person").forEach((button) => {
+        button.classList.toggle("active", button.dataset.id === id);
+      });
+      renderSteps(customer);
+    }
+
+    function init() {
+      const people = document.getElementById("people");
+      people.innerHTML = window.TRACE.customers.map(renderPerson).join("");
+      people.addEventListener("click", (event) => {
+        const button = event.target.closest(".person");
+        if (!button) return;
+        history.replaceState(null, "", "#" + button.dataset.id);
+        select(button.dataset.id);
+      });
+      const fromHash = location.hash.replace("#", "");
+      const initial = window.TRACE.customers.some((item) => item.id === fromHash)
+        ? fromHash
+        : window.TRACE.customers[0].id;
+      select(initial);
+
+      document.getElementById("error-chart").innerHTML = [
+        bar("Steady · median", 3.55, 8, true, "3.55 d"),
+        bar("Steady · network", 3.23, 8, false, "3.23 d"),
+        bar("Switching · median", 6.94, 8, true, "6.94 d"),
+        bar("Switching · network", 2.54, 8, false, "2.54 d"),
+      ].join("");
+
+      document.getElementById("fit-chart").innerHTML = [
+        bar("Consumables · strong filter", 66.9, 100, false, "66.9%"),
+        bar("Irregular · strong filter", 0, 100, true, "0%"),
+        bar("Irregular · gap only", 39.2, 100, true, "39.2%"),
+      ].join("");
+    }
+
+    init();
+  </script>
+</body>
+</html>
