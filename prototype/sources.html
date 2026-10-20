@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Source register · Pantry & Co.</title>
+  <style>
+    :root { --ink:#17332c; --muted:#61716b; --paper:#f7f3ea; --card:#fffdf8; --line:#ddd7ca; --green:#1f6b50; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.6 Inter,"Segoe UI",sans-serif; }
+    main { width:min(860px,calc(100% - 32px)); margin:0 auto; padding:70px 0; }
+    a { color:var(--green); }
+    h1,h2 { font-family:Georgia,serif; font-weight:500; letter-spacing:-.03em; }
+    h1 { font-size:clamp(42px,7vw,72px); line-height:1; margin:12px 0 20px; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.13em; font-size:12px; font-weight:750; }
+    .lede { color:var(--muted); max-width:680px; }
+    .source { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; margin-top:16px; }
+    .source h2 { margin:0 0 6px; }
+    .status { display:inline-block; border-radius:999px; background:#e4f1e8; padding:3px 9px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+    .pending { background:#efe8dc; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="javascript:history.back()">← Back to recommendation</a>
+    <p class="eyebrow">Grounding register</p>
+    <h1>What the assistant is allowed to use.</h1>
+    <p class="lede">This MVP separates verified catalogue facts from content that still needs sponsor approval. The chatbot should escalate instead of inventing an answer.</p>
+
+    <article class="source" id="product-catalogue">
+      <span class="status">Available</span>
+      <h2>Approved product catalogue</h2>
+      <p>Source: the <strong>Products</strong> sheet in the synthetic retail workbook. It provides product IDs, names, categories, prices, purchase cycles and approved complementary products.</p>
+      <a href="../data/retail_purchase_training_dataset.xlsx">Open the synthetic workbook</a>
+    </article>
+
+    <article class="source">
+      <span class="status">Available</span>
+      <h2>Customer recommendation context</h2>
+      <p>Source: the trained timing and product models, followed by the version-controlled targeting policy. Recommendations never override consent or holdout rules.</p>
+      <a href="../prediction/policy_config.json">Open the targeting policy</a>
+    </article>
+
+    <article class="source">
+      <span class="status">Available</span>
+      <h2>Inventory and active offers</h2>
+      <p>Sources: the <strong>Inventory</strong> and <strong>Active Offers</strong> sheets. The pipeline rejects out-of-stock recommendations and only displays a promotional price when its dated offer is active.</p>
+      <a href="../data/retail_purchase_training_dataset.xlsx">Open the synthetic merchandising data</a>
+    </article>
+
+    <article class="source" id="customer-support-content">
+      <span class="status">Available for MVP</span>
+      <h2>FAQ and customer policies</h2>
+      <p>The prototype includes fictional, approved FAQ and policy pages for testing grounded answers and human handover. Sponsor policies must replace them before production.</p>
+      <a href="faq.html">Open FAQ</a> · <a href="policies.html">Open policies</a>
+    </article>
+  </main>
+</body>
+</html>

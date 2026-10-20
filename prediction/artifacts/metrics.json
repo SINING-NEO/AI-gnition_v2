@@ -1,0 +1,30 @@
+{
+  "data_source": "C:\\Users\\yanmy\\Desktop\\AI IGNITION\\AI-gnition_v2\\data\\retail_purchase_training_dataset.xlsx",
+  "split_strategy": "predefined customer-level train/validation/test split",
+  "rows": {
+    "train": 12248,
+    "validation": 2693,
+    "test": 2593
+  },
+  "customers": {
+    "train": 1998,
+    "validation": 431,
+    "test": 429
+  },
+  "purchase_timing": {
+    "target": "target_next_gap_days",
+    "metric": "mean_absolute_error_days",
+    "personal_median_baseline_test": 10.19,
+    "ridge_test": 8.193,
+    "selected_alpha": 0.01
+  },
+  "next_product": {
+    "target": "target_next_product_id",
+    "classes": 12,
+    "most_common_baseline_test_accuracy": 0.1504,
+    "repeat_latest_baseline_test_accuracy": 0.4909,
+    "softmax_test_accuracy": 0.7794,
+    "softmax_test_top3_accuracy": 0.9252,
+    "epochs_trained": 48
+  }
+}

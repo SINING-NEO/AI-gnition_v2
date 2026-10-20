@@ -1,2 +1,7 @@
 __pycache__/
 *.pyc
+.venv/
+.artifact_build/
+.env
+prediction/campaign_output/email_delivery_log.jsonl
+*.inspect.ndjson

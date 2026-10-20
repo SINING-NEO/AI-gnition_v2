@@ -1,0 +1,42 @@
+{
+  "campaign_id": "RET-20261020",
+  "generated_at": "2026-10-20T08:56:38.481948+00:00",
+  "mode": "review_only_no_messages_sent",
+  "customers_scored": 3000,
+  "campaign_history_events_checked": 0,
+  "selected_for_email_review": 250,
+  "status_counts": {
+    "eligible": 250,
+    "holdout": 209,
+    "stay_quiet": 2019,
+    "suppress": 522
+  },
+  "state_counts": {
+    "campaign_capacity": 668,
+    "due_soon": 70,
+    "insufficient_history": 121,
+    "lapsed": 389,
+    "no_contact_consent": 522,
+    "not_due": 1230
+  },
+  "policy_config": {
+    "minimum_orders": 3,
+    "minimum_product_confidence": 0.55,
+    "contact_window_before_days": 5,
+    "contact_window_after_days": 7,
+    "lapsed_after_days": 10,
+    "contact_cooldown_days": 14,
+    "holdout_percentage": 20,
+    "maximum_campaign_recipients": 250,
+    "landing_page_base_url": "http://localhost:8000/prototype/recommendation.html"
+  },
+  "outputs": [
+    "scored_customers.json",
+    "eligible_customers.json",
+    "suppressed_customers.json",
+    "email_campaign_queue.json",
+    "email_campaign_queue.csv",
+    "landing_context.json",
+    "mantago_ready_payload.json"
+  ]
+}

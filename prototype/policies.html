@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer policies · Pantry & Co.</title>
+  <style>
+    :root { --ink:#17332c; --muted:#61716b; --paper:#f7f3ea; --card:#fffdf8; --line:#ddd7ca; --green:#1f6b50; --mint:#e4f1e8; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.65 Inter,"Segoe UI",sans-serif; }
+    header,main,footer { width:min(920px,calc(100% - 32px)); margin:auto; }
+    header { padding:28px 0 10px; display:flex; justify-content:space-between; gap:20px; align-items:center; }
+    nav { display:flex; flex-wrap:wrap; gap:14px; }
+    a { color:var(--green); }
+    h1,h2 { font-family:Georgia,serif; font-weight:500; letter-spacing:-.03em; }
+    h1 { font-size:clamp(42px,7vw,70px); line-height:1; margin:18px 0; }
+    h2 { margin-top:0; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.13em; font-size:12px; font-weight:750; }
+    .notice { background:var(--mint); border-radius:14px; padding:14px 16px; }
+    .policy { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px; margin:16px 0; }
+    .policy ul { margin-bottom:0; }
+    footer { padding:24px 0 40px; color:var(--muted); font-size:13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Pantry &amp; Co.</strong>
+    <nav><a href="faq.html">FAQ</a><a href="sources.html">Sources</a><a href="javascript:history.back()">Back</a></nav>
+  </header>
+  <main>
+    <p class="eyebrow">Knowledge source · POLICY-DEMO-1 · Version 2026-10-20</p>
+    <h1>Customer policies</h1>
+    <p class="notice"><strong>MVP demonstration:</strong> these are fictional but approved facts for testing chatbot grounding. They must be replaced with the sponsor’s real policies before production.</p>
+
+    <section class="policy" id="stock-and-orders" data-source-id="POLICY-STOCK-01">
+      <h2>Stock and ordering</h2>
+      <ul>
+        <li>Availability is checked again at checkout. A recommendation does not reserve stock.</li>
+        <li>Out-of-stock products must not be offered for immediate purchase.</li>
+        <li>Low-stock products may be shown with a clear low-stock label.</li>
+        <li>If the website and checkout disagree, the checkout record is authoritative and the customer may request human help.</li>
+      </ul>
+    </section>
+
+    <section class="policy" id="promotions" data-source-id="POLICY-OFFER-01">
+      <h2>Prices and promotions</h2>
+      <ul>
+        <li>Only offers marked active between their start and end dates may be displayed.</li>
+        <li>Promotions apply while stocks last and cannot be combined unless the offer explicitly says otherwise.</li>
+        <li>Any customer limit written in the offer terms must be followed.</li>
+        <li>The checkout price is final. Price disagreements should be transferred to a human.</li>
+      </ul>
+    </section>
+
+    <section class="policy" id="delivery" data-source-id="POLICY-DELIVERY-01">
+      <h2>Delivery</h2>
+      <ul>
+        <li>Standard demo delivery is estimated at three to five business days within Singapore.</li>
+        <li>A dispatch or tracking message is provided when an order leaves the store.</li>
+        <li>If an order has not arrived five business days after dispatch, the chatbot should transfer the enquiry to a human.</li>
+      </ul>
+    </section>
+
+    <section class="policy" id="returns" data-source-id="POLICY-RETURN-01">
+      <h2>Returns and refunds</h2>
+      <ul>
+        <li>Unopened, unused products may be returned within 14 calendar days of delivery with proof of purchase.</li>
+        <li>Opened consumable products are not returnable unless they are damaged, defective or incorrect.</li>
+        <li>Damaged or incorrect items should be reported within 48 hours of delivery.</li>
+        <li>Approved refunds are returned to the original payment method within five to ten business days.</li>
+      </ul>
+    </section>
+
+    <section class="policy" id="messages-and-privacy" data-source-id="POLICY-PRIVACY-01">
+      <h2>Recommendations, messages and privacy</h2>
+      <ul>
+        <li>Recommendations may use consented customers’ fictional order histories and current catalogue data.</li>
+        <li>Customers can reply “stop” to suppress future marketing messages.</li>
+        <li>Requests to access, correct or delete customer data must be handed to a human.</li>
+        <li>Payment details, passwords and one-time codes must never be requested in chatbot messages.</li>
+      </ul>
+    </section>
+
+    <section class="policy" id="human-handover" data-source-id="POLICY-HANDOVER-01">
+      <h2>Human handover</h2>
+      <p>The chatbot must offer a human handover when the customer asks for one, when no approved source supports the answer, or when the enquiry concerns payment disputes, allergies or safety, damaged goods, an unrecognised purchase, account access or personal-data rights.</p>
+    </section>
+  </main>
+  <footer>Fictional policy content for the Pantry &amp; Co. MVP.</footer>
+</body>
+</html>
