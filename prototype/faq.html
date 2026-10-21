@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frequently asked questions · Pantry & Co.</title>
+  <style>
+    :root { --ink:#17332c; --muted:#61716b; --paper:#f7f3ea; --card:#fffdf8; --line:#ddd7ca; --green:#1f6b50; --mint:#e4f1e8; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:17px/1.65 Inter,"Segoe UI",sans-serif; }
+    header,main,footer { width:min(920px,calc(100% - 32px)); margin:auto; }
+    header { padding:28px 0 10px; display:flex; justify-content:space-between; gap:20px; align-items:center; }
+    nav { display:flex; flex-wrap:wrap; gap:14px; }
+    a { color:var(--green); }
+    h1,h2 { font-family:Georgia,serif; font-weight:500; letter-spacing:-.03em; }
+    h1 { font-size:clamp(42px,7vw,70px); line-height:1; margin:18px 0; }
+    .eyebrow { color:var(--green); text-transform:uppercase; letter-spacing:.13em; font-size:12px; font-weight:750; }
+    .notice { background:var(--mint); border-radius:14px; padding:14px 16px; }
+    details { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin:12px 0; }
+    summary { cursor:pointer; font-weight:750; }
+    details p { margin-bottom:0; }
+    footer { padding:24px 0 40px; color:var(--muted); font-size:13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>Pantry &amp; Co.</strong>
+    <nav><a href="policies.html">Policies</a><a href="sources.html">Sources</a><a href="javascript:history.back()">Back</a></nav>
+  </header>
+  <main>
+    <p class="eyebrow">Knowledge source · FAQ-DEMO-1 · Version 2026-10-20</p>
+    <h1>Frequently asked questions</h1>
+    <p class="notice"><strong>MVP demonstration:</strong> answers are fictional, approved test content. Unsupported questions should be transferred to a human.</p>
+
+    <details id="why-recommended" data-source-id="FAQ-RECOMMEND-01" open>
+      <summary>Why did I receive this recommendation?</summary>
+      <p>The demo uses your fictional purchase timing and product history, then checks consent, current stock and active offers. It does not place an order automatically. <a href="policies.html#messages-and-privacy">Read the recommendation policy</a>.</p>
+    </details>
+    <details id="stock" data-source-id="FAQ-STOCK-01">
+      <summary>Is the recommended product definitely available?</summary>
+      <p>The displayed stock comes from the latest synthetic inventory snapshot and is checked again at checkout. A recommendation does not reserve stock. <a href="policies.html#stock-and-orders">Read the stock policy</a>.</p>
+    </details>
+    <details id="discount" data-source-id="FAQ-OFFER-01">
+      <summary>How do I know the discount is valid?</summary>
+      <p>The prototype only displays an offer when the current date falls between its approved start and end dates. The checkout price remains final. <a href="policies.html#promotions">Read the promotion policy</a>.</p>
+    </details>
+    <details id="delivery" data-source-id="FAQ-DELIVERY-01">
+      <summary>How long does delivery take?</summary>
+      <p>Standard demo delivery within Singapore is estimated at three to five business days. <a href="policies.html#delivery">Read the delivery policy</a>.</p>
+    </details>
+    <details id="return" data-source-id="FAQ-RETURN-01">
+      <summary>Can I return an item?</summary>
+      <p>Unopened and unused products may be returned within 14 calendar days with proof of purchase. Different rules apply to damaged, incorrect or opened consumable items. <a href="policies.html#returns">Read the return policy</a>.</p>
+    </details>
+    <details id="stop" data-source-id="FAQ-STOP-01">
+      <summary>How do I stop marketing messages?</summary>
+      <p>Reply “stop” in the conversation. The workflow should suppress future marketing messages and record the preference.</p>
+    </details>
+    <details id="human" data-source-id="FAQ-HUMAN-01">
+      <summary>Can I speak to a person?</summary>
+      <p>Yes. Select “Talk to a person” at any time. Unsupported, sensitive or disputed enquiries should also be handed over automatically. <a href="policies.html#human-handover">Read the handover policy</a>.</p>
+    </details>
+  </main>
+  <footer>Fictional FAQ content for the Pantry &amp; Co. MVP.</footer>
+</body>
+</html>

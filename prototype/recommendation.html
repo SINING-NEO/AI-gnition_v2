@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your recommendation · Pantry & Co.</title>
+  <style>
+    :root {
+      --ink: #17332c; --muted: #61716b; --paper: #f7f3ea; --card: #fffdf8;
+      --line: #ddd7ca; --green: #1f6b50; --green-dark: #124b38;
+      --mint: #e4f1e8; --amber: #e9b85d; --shadow: 0 20px 60px rgba(23,51,44,.12);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: Inter,"Segoe UI",sans-serif; line-height: 1.55; }
+    a { color: var(--green-dark); }
+    button { font: inherit; }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    header { border-bottom: 1px solid var(--line); background: rgba(255,253,248,.82); }
+    header .shell { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { font: 700 22px Georgia,serif; }
+    .header-right { display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:flex-end; }
+    .header-right nav { display:flex; gap:12px; font-size:14px; }
+    .demo-pill { border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    main { padding: 70px 0 110px; }
+    .eyebrow { color: var(--green); font-size: 12px; font-weight: 750; text-transform: uppercase; letter-spacing: .13em; }
+    h1,h2 { font-family: Georgia,serif; font-weight: 500; letter-spacing: -.035em; }
+    h1 { max-width: 780px; font-size: clamp(42px,7vw,76px); line-height: .98; margin: 14px 0 20px; }
+    .lede { max-width: 680px; color: var(--muted); font-size: 19px; }
+    .grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 22px; margin-top: 42px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }
+    .product { padding: 30px; position: relative; min-height: 400px; }
+    .product::after { content:""; position:absolute; width:240px; height:240px; border-radius:50%; right:-62px; top:-72px; background:var(--mint); }
+    .product > * { position: relative; z-index: 1; }
+    .product-label { color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .1em; }
+    .product h2 { font-size: clamp(34px,5vw,56px); line-height: 1.02; margin: 36px 0 12px; max-width: 580px; }
+    .commerce { display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin:0 0 16px; }
+    .current-price { font: 500 30px Georgia,serif; }
+    .regular-price { color:var(--muted); text-decoration:line-through; }
+    .stock { display:inline-block; border-radius:999px; background:var(--mint); padding:5px 9px; font-size:12px; font-weight:750; text-transform:uppercase; letter-spacing:.06em; }
+    .stock.low_stock { background:#fff0cc; color:#76510d; }
+    .offer { display:none; border-left:3px solid var(--amber); padding-left:11px; color:var(--muted); font-size:14px; }
+    .stock-detail { color:var(--muted); font-size:13px; }
+    .upgrade { display:inline-flex; gap:8px; align-items:center; background:var(--mint); border-radius:999px; padding:8px 12px; margin:8px 0 24px; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; }
+    .button { border:0; border-radius:999px; padding:12px 18px; cursor:pointer; font-weight:700; }
+    .primary { background:var(--green); color:white; }
+    .secondary { background:transparent; border:1px solid var(--green); color:var(--green-dark); }
+    .explain { padding:28px; box-shadow:none; }
+    .explain h2 { font-size:28px; margin:0 0 12px; }
+    .facts { list-style:none; padding:0; margin:24px 0; display:grid; gap:14px; }
+    .facts li { border-top:1px solid var(--line); padding-top:13px; }
+    .facts strong { display:block; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
+    .source-note { background:#f1ede3; border-radius:14px; padding:14px; color:var(--muted); font-size:14px; }
+    .error { display:none; max-width:680px; padding:24px; border:1px solid #dca99c; background:#fff4ef; border-radius:18px; }
+    .chat-launcher { position:fixed; right:22px; bottom:22px; border:0; border-radius:999px; padding:14px 18px; background:var(--green-dark); color:white; box-shadow:var(--shadow); cursor:pointer; font-weight:750; z-index:20; }
+    .chat { display:none; position:fixed; right:22px; bottom:84px; width:min(370px,calc(100vw - 32px)); background:white; border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); overflow:hidden; z-index:20; }
+    .chat.open { display:block; }
+    .chat-head { background:var(--green-dark); color:white; padding:16px 18px; }
+    .chat-head strong,.chat-head small { display:block; }
+    .chat-head small { opacity:.75; }
+    .chat-body { padding:16px; }
+    .bubble { width:fit-content; max-width:88%; padding:10px 12px; border-radius:14px 14px 14px 4px; background:var(--mint); margin-bottom:10px; }
+    .chat-actions { display:grid; gap:8px; margin-top:14px; }
+    .chat-actions button { text-align:left; border:1px solid var(--line); background:white; border-radius:12px; padding:10px 12px; cursor:pointer; color:var(--ink); }
+    .integration-note { color:var(--muted); font-size:11px; margin-top:12px; }
+    footer { border-top:1px solid var(--line); color:var(--muted); padding:26px 0 40px; font-size:13px; }
+    @media (max-width:780px) { main{padding-top:44px}.grid{grid-template-columns:1fr}.product{min-height:auto}.chat-launcher{right:16px;bottom:16px}.chat{right:16px;bottom:76px} }
+  </style>
+</head>
+<body>
+  <header><div class="shell"><div class="brand">Pantry &amp; Co.</div><div class="header-right"><nav><a href="faq.html">FAQ</a><a href="policies.html">Policies</a><a href="sources.html">Sources</a></nav><div class="demo-pill">Synthetic customer demo</div></div></div></header>
+
+  <main class="shell">
+    <section id="experience" hidden>
+      <div class="eyebrow" id="journey-label">Personal recommendation</div>
+      <h1><span id="greeting">Welcome back.</span> Your next essential may be due.</h1>
+      <p class="lede">This recommendation uses a fictional purchase pattern. Nothing has been ordered, charged or sent automatically.</p>
+
+      <div class="grid">
+        <article class="card product">
+          <div class="product-label">Suggested reorder</div>
+          <h2 id="reorder-name">Loading product…</h2>
+          <div class="commerce">
+            <strong class="current-price" id="current-price">—</strong>
+            <span class="regular-price" id="regular-price"></span>
+            <span class="stock" id="stock-status">Checking stock…</span>
+          </div>
+          <p class="offer" id="offer-details"></p>
+          <p class="stock-detail" id="stock-detail"></p>
+          <div id="upsell-section">
+            <p>Prefer better value? The approved alternative is:</p>
+            <div class="upgrade"><span aria-hidden="true">↗</span><strong id="upsell-name">Loading upgrade…</strong></div>
+          </div>
+          <div class="actions">
+            <button class="button primary" type="button" data-chat-action="reorder">Ask about reordering</button>
+            <button class="button secondary" type="button" data-chat-action="upgrade">Compare the upgrade</button>
+          </div>
+        </article>
+
+        <aside class="card explain">
+          <div class="eyebrow">Why you are seeing this</div>
+          <h2>A timely, bounded suggestion.</h2>
+          <ul class="facts">
+            <li><strong>Journey</strong><span id="journey">Loading…</span></li>
+            <li><strong>Recommendation confidence</strong><span id="confidence">Loading…</span></li>
+            <li><strong>Inventory rule</strong>Out-of-stock products are removed before this page is created.</li>
+            <li><strong>Human help</strong>Always available from the chat.</li>
+          </ul>
+          <div class="source-note">Product, stock and offer facts come from approved synthetic records. <a href="sources.html">View the demo sources</a>.</div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="error" class="error">
+      <div class="eyebrow">Link unavailable</div>
+      <h2>This recommendation link is missing or invalid.</h2>
+      <p>Please use the latest complete link from the campaign email.</p>
+    </section>
+  </main>
+
+  <button class="chat-launcher" id="chat-launcher" type="button" aria-expanded="false">Chat with us</button>
+  <section class="chat" id="chat" aria-label="Chat preview">
+    <div class="chat-head"><strong>Pantry assistant</strong><small>Website chat preview</small></div>
+    <div class="chat-body">
+      <div class="bubble" id="chat-message">Hello! I can help with your recommendation or connect you to a person.</div>
+      <div class="chat-actions">
+        <button type="button" data-reply="source">Why was this recommended?</button>
+        <button type="button" data-reply="faq">Read common questions</button>
+        <button type="button" data-reply="policy">Delivery and returns</button>
+        <button type="button" data-reply="human">Talk to a person</button>
+      </div>
+      <p class="integration-note">Replace this preview with the MantaGO LiveChat embed after sponsor access is granted.</p>
+    </div>
+  </section>
+
+  <footer><div class="shell">MVP demonstration using fictional customers, orders, inventory, offers and email addresses.</div></footer>
+
+  <script>
+    const state = { context: null };
+    const money = value => `S$${Number(value).toFixed(2)}`;
+    const chat = document.getElementById("chat");
+    const launcher = document.getElementById("chat-launcher");
+    const message = document.getElementById("chat-message");
+
+    function openChat(text) {
+      if (text) message.textContent = text;
+      chat.classList.add("open");
+      launcher.setAttribute("aria-expanded", "true");
+    }
+    launcher.onclick = () => {
+      const open = chat.classList.toggle("open");
+      launcher.setAttribute("aria-expanded", String(open));
+    };
+    document.querySelectorAll("[data-chat-action]").forEach(button => {
+      button.onclick = () => {
+        if (!state.context) return;
+        const product = button.dataset.chatAction === "upgrade" ? state.context.upsell_product : state.context.reorder_product;
+        if (product) openChat(`I can help with ${product.product_name}. Would you like product details, ordering help, or a person?`);
+      };
+    });
+    document.querySelector('[data-reply="source"]').onclick = () => {
+      if (!state.context) return;
+      message.innerHTML = 'The suggestion uses the approved catalogue, inventory and active-offer records. <a href="sources.html">View the source register</a>.';
+    };
+    document.querySelector('[data-reply="faq"]').onclick = () => {
+      message.innerHTML = 'You can review answers about recommendations, stock, discounts and support in the <a href="faq.html">FAQ</a>.';
+    };
+    document.querySelector('[data-reply="policy"]').onclick = () => {
+      message.innerHTML = 'Standard demo delivery is three to five business days. Unopened products may be returned within 14 days. <a href="policies.html">Read the full demo policies</a>.';
+    };
+    document.querySelector('[data-reply="human"]').onclick = () => {
+      message.textContent = "I’ll hand this conversation to a support person. In the connected version, MantaGO LiveChat will route the request.";
+    };
+
+    async function initialise() {
+      try {
+        const token = new URLSearchParams(location.search).get("t");
+        if (!token) throw new Error("Missing token");
+        const response = await fetch("../prediction/campaign_output/landing_context.json", { cache:"no-store" });
+        if (!response.ok) throw new Error("Context unavailable");
+        const contexts = await response.json();
+        const context = contexts[token];
+        if (!context) throw new Error("Unknown token");
+        state.context = context;
+
+        const reorder = context.reorder_product;
+        document.getElementById("greeting").textContent = `Welcome back, ${context.customer_first_name}.`;
+        document.getElementById("journey-label").textContent = context.conversation_goal.replaceAll("_", " ");
+        document.getElementById("journey").textContent = context.customer_state === "lapsed" ? "Welcome-back support" : "Due-soon replenishment";
+        document.getElementById("confidence").textContent = `${Math.round(context.product_confidence * 100)}%`;
+        document.getElementById("reorder-name").textContent = reorder.product_name;
+        document.getElementById("current-price").textContent = money(reorder.current_price_sgd);
+        document.getElementById("stock-detail").textContent = `${reorder.stock_quantity} units available · inventory updated ${reorder.inventory_last_updated}`;
+        const stock = document.getElementById("stock-status");
+        stock.textContent = reorder.stock_status.replaceAll("_", " ");
+        stock.classList.add(reorder.stock_status);
+
+        if (reorder.discount_pct > 0) {
+          document.getElementById("regular-price").textContent = money(reorder.regular_price_sgd);
+          const offer = document.getElementById("offer-details");
+          offer.style.display = "block";
+          offer.textContent = `${Math.round(reorder.discount_pct * 100)}% approved offer · ${reorder.offer_terms} · valid until ${reorder.offer_valid_until}`;
+        }
+
+        if (context.upsell_product) {
+          const upsell = context.upsell_product;
+          const discount = upsell.discount_pct > 0 ? ` · ${Math.round(upsell.discount_pct * 100)}% off (was ${money(upsell.regular_price_sgd)}) · valid until ${upsell.offer_valid_until}` : "";
+          document.getElementById("upsell-name").textContent = `${upsell.product_name} · ${money(upsell.current_price_sgd)}${discount}`;
+        } else {
+          document.getElementById("upsell-section").hidden = true;
+          document.querySelector('[data-chat-action="upgrade"]').hidden = true;
+        }
+        document.getElementById("experience").hidden = false;
+      } catch {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+    initialise();
+  </script>
+</body>
+</html>

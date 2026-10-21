@@ -1,0 +1,11 @@
+{
+  "minimum_orders": 3,
+  "minimum_product_confidence": 0.55,
+  "contact_window_before_days": 5,
+  "contact_window_after_days": 7,
+  "lapsed_after_days": 10,
+  "contact_cooldown_days": 14,
+  "holdout_percentage": 20,
+  "maximum_campaign_recipients": 250,
+  "landing_page_base_url": "http://localhost:8000/prototype/recommendation.html"
+}
