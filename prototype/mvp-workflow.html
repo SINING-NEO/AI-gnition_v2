@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retention MVP — workflow and formulas</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e0d6c6;
+      --card: #fffdf8;
+      --green: #1d6b4a;
+      --green-soft: #e6f3ec;
+      --clay: #8f3d2b;
+      --clay-soft: #f8ebe6;
+      --gold: #8a6420;
+      --gold-soft: #f6efdc;
+      --quiet: #3d4a5c;
+      --quiet-soft: #e8edf3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+    header, main { width: min(980px, calc(100% - 32px)); margin: 0 auto; }
+    header { padding: 32px 0 8px; }
+    h1, h2 { font-family: Georgia, "Iowan Old Style", Palatino, serif; font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 40px; line-height: 1.08; margin: 0 0 12px; }
+    h2 { font-size: 28px; margin: 0 0 8px; }
+    .kicker { letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+    .lede { font-size: 19px; max-width: 68ch; }
+    a { color: var(--green); }
+    .muted { color: var(--muted); }
+    section { padding: 22px 0 6px; }
+    .rule { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+    .flow, .split, .stats { display: grid; gap: 10px; }
+    .flow { grid-template-columns: repeat(4, 1fr); }
+    .split { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
+    .stats { grid-template-columns: repeat(4, 1fr); }
+    .card, .step, .formula, .person {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .step, .card, .person { padding: 12px 14px; }
+    .step b { display: block; margin-bottom: 4px; }
+    .step span, .why { color: var(--muted); font-size: 14px; }
+    .formula { padding: 14px 16px; font-family: Consolas, "Courier New", monospace; font-size: 14px; line-height: 1.65; overflow-x: auto; white-space: pre-wrap; }
+    .bar-row { display: grid; grid-template-columns: 168px 1fr 72px; gap: 8px; align-items: center; font-size: 14px; margin: 6px 0; }
+    .track { background: #efe8da; height: 12px; border-radius: 99px; }
+    .fill { height: 12px; border-radius: 99px; background: var(--green); }
+    .fill.gold { background: var(--gold); }
+    .fill.clay { background: var(--clay); }
+    .fill.quiet { background: var(--quiet); }
+    label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    input { width: 100%; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .result { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--green-soft); }
+    .result.stop { background: var(--clay-soft); }
+    .result.hold { background: var(--gold-soft); }
+    .result.quiet { background: var(--quiet-soft); }
+    table { width: 100%; border-collapse: collapse; background: var(--card); }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 15px; vertical-align: top; }
+    th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    footer { width: min(980px, calc(100% - 32px)); margin: 8px auto 32px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 860px) {
+      h1 { font-size: 32px; }
+      .flow, .split, .stats, .bar-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Campaign RET-20261020 · fictional customers · review only</p>
+    <h1>What the merged MVP calculates, then what it does with the number.</h1>
+    <p class="lede">Two models score each customer. Ordinary rules decide whether that score becomes an email. No message in this run was sent. MantaGO is not connected.</p>
+    <p><a href="judges.html">For the judges</a> · <a href="index.html">Explainer</a> · <a href="workflow.html">Earlier agent workflow</a> · <a href="recommendation.html">Landing page</a></p>
+  </header>
+  <main>
+    <section>
+      <div class="stats">
+        <article class="card"><b>3,000</b><div class="why">customers scored</div></article>
+        <article class="card"><b>8.19 days</b><div class="why">ridge error on the test set</div></article>
+        <article class="card"><b>77.9%</b><div class="why">next-product accuracy</div></article>
+        <article class="card"><b>250</b><div class="why">drafts queued for review</div></article>
+      </div>
+    </section>
+
+    <section>
+      <h2>The path</h2>
+      <div class="flow">
+        <div class="step"><b>1. Orders</b><span>Fictional purchases. Gaps are the days between consecutive orders.</span></div>
+        <div class="step"><b>2. Timing model</b><span>Ridge regression predicts the next gap in days.</span></div>
+        <div class="step"><b>3. Product model</b><span>Softmax picks the next product and a confidence.</span></div>
+        <div class="step"><b>4. Stock and offer</b><span>Keep the prediction only if that product is in stock.</span></div>
+        <div class="step"><b>5. Policy</b><span>Consent, history, cooldown, and the due window. Not the model.</span></div>
+        <div class="step"><b>6. Holdout</b><span>20% of eligible people are kept back for measurement.</span></div>
+        <div class="step"><b>7. Rank and cap</b><span>Score the rest. Keep the top 250.</span></div>
+        <div class="step"><b>8. Review queue</b><span>A draft and a landing link. A person still has to approve a send.</span></div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>Where the 3,000 people went</h2>
+      <p class="muted">These counts partition the scored file. They come from <code>prediction/campaign_output/campaign_summary.json</code>.</p>
+      <div id="funnel"></div>
+      <p class="muted">1,127 people were inside a contact window before the holdout and the cap: 250 queued + 209 holdout + 668 over the 250-person limit. The queued 250 are all in the lapsed state, because a lapsed customer scores higher than a due-soon customer.</p>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>Formulas the code actually uses</h2>
+      <div class="formula">gap_i = order_date_i − order_date_(i−1)     in days
+
+mean   = (1 / n) × Σ gap_i
+median = middle value of the sorted gaps
+std    = √( (1 / n) × Σ (gap_i − mean)² )        population standard deviation
+
+z_j = (x_j − training_mean_j) / training_scale_j
+predicted_gap = clip( bias + z · weights , 7 , 180 )
+
+days_until_due = predicted_gap − days_since_last_purchase
+
+P_k = exp(logit_k − max(logit)) / Σ exp(logit_j − max(logit))
+
+opportunity = 0.5 × state_weight + 0.3 × product_confidence + 0.2 × dominant_product_share
+state_weight = 1.0 if lapsed, else 0.8
+
+MAE = (1 / n) × Σ | actual_gap − predicted_gap |
+
+holdout bucket = integer( first 8 hex digits of SHA-256(customer_id) ) mod 100
+holdout if bucket &lt; 20</div>
+      <p class="why">Sources: <code>prediction/train_models.py</code> and <code>prediction/score_customers.py</code>. Test MAE and accuracy are from <code>prediction/artifacts/metrics.json</code>: personal-median baseline 10.19 days, ridge 8.193 days, repeat-latest-product baseline 49.09%, softmax 77.94%.</p>
+    </section>
+
+    <section>
+      <h2>Policy, in the order the code checks it</h2>
+      <table>
+        <thead><tr><th>Check</th><th>Rule</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Consent</td><td>contact_consent is false</td><td>Suppress</td></tr>
+          <tr><td>History</td><td>orders &lt; 3</td><td>Stay quiet</td></tr>
+          <tr><td>Stock</td><td>no approved product is in stock</td><td>Stay quiet</td></tr>
+          <tr><td>Cooldown</td><td>emailed less than 14 days ago</td><td>Stay quiet. This run had no prior sends.</td></tr>
+          <tr><td>Due soon</td><td>−7 ≤ days_until_due ≤ 5</td><td>Eligible. From 7 days late to 5 days early.</td></tr>
+          <tr><td>Lapsed</td><td>days_until_due &lt; −10</td><td>Eligible. More than 10 days past the predicted date.</td></tr>
+          <tr><td>Otherwise</td><td>including 8, 9, or 10 days late</td><td>Stay quiet. Not due.</td></tr>
+          <tr><td>Holdout</td><td>bucket &lt; 20</td><td>Do not email. Keep for the comparison.</td></tr>
+          <tr><td>Cap</td><td>opportunity rank worse than 250</td><td>Stay quiet. Over capacity.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>Uma, with the numbers plugged in</h2>
+      <p class="muted">Customer C00018 from the review queue. Six fictional orders. Latest order 12 May 2026. As-of date 20 Oct 2026.</p>
+      <div class="split">
+        <div class="formula">days_since_last = 161
+predicted_gap   = 32.86
+days_until_due  = 32.86 − 161 = −128.14
+
+−128.14 &lt; −10  →  lapsed, and eligible on timing
+
+product confidence = 0.9374
+0.9374 ≥ 0.55     →  use the model’s product, Oat Milk 1L
+
+holdout bucket = 83
+83 ≥ 20           →  not in the holdout
+
+opportunity = 0.5×1.0 + 0.3×0.9374 + 0.2×0.6667
+            = 0.5000 + 0.2812 + 0.1333
+            = 0.9146
+
+Ranked inside the top 250 → draft queued, not sent.</div>
+        <article class="person">
+          <b>Draft that was queued</b>
+          <p>Subject: Need help restocking Oat Milk 1L?</p>
+          <p class="why">Hi Uma, based on your usual purchase cycle, your Oat Milk 1L may be due.</p>
+          <p class="why">Median gap was 13 days and the model predicted 32.86 days. She is late against both. The email uses the model’s product, not a discount the model invented.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>Try the same formulas</h2>
+      <p class="muted">These inputs use Uma’s values. Change them to see the branch. The page recomputes days until due, the policy state, and the opportunity score. It does not rerun the trained weights.</p>
+      <div class="split">
+        <div class="card">
+          <label>Predicted gap (days)<input id="gap" type="number" value="32.86" step="0.01"></label>
+          <label>Days since last purchase<input id="since" type="number" value="161" step="1"></label>
+          <label>Product confidence (0 to 1)<input id="conf" type="number" value="0.9374" step="0.0001" min="0" max="1"></label>
+          <label>Dominant product share (0 to 1)<input id="share" type="number" value="0.6667" step="0.0001" min="0" max="1"></label>
+          <label>Holdout bucket (0 to 99)<input id="bucket" type="number" value="83" step="1" min="0" max="99"></label>
+        </div>
+        <div>
+          <div class="formula" id="math"></div>
+          <div class="result" id="verdict"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>Held-out test, before this campaign</h2>
+      <p class="muted">Mean absolute error in days. Lower is better. 2,593 test rows, 429 customers, split so one customer is never in both train and test.</p>
+      <div id="mae"></div>
+      <p class="muted" style="margin-top:14px">Next-product accuracy on the same test rows. Higher is better. 12 products.</p>
+      <div id="acc"></div>
+    </section>
+  </main>
+  <footer>
+    Synthetic data only. Campaign mode: review_only_no_messages_sent. The landing page and MantaGO payload were prepared and not transmitted.
+  </footer>
+  <script>
+    function bar(label, value, max, kind, display) {
+      const pct = value <= 0 ? 0 : Math.max(2, Math.round((value / max) * 100));
+      return `<div class="bar-row"><span>${label}</span><div class="track"><div class="fill ${kind || ""}" style="width:${pct}%"></div></div><span>${display}</span></div>`;
+    }
+
+    document.getElementById("funnel").innerHTML = [
+      bar("Queued for review", 250, 3000, "", "250"),
+      bar("Holdout", 209, 3000, "gold", "209"),
+      bar("Over the 250 cap", 668, 3000, "gold", "668"),
+      bar("Not due", 1230, 3000, "quiet", "1,230"),
+      bar("Too few orders", 121, 3000, "quiet", "121"),
+      bar("No consent", 522, 3000, "clay", "522"),
+    ].join("");
+
+    document.getElementById("mae").innerHTML = [
+      bar("Personal median", 10.19, 12, "gold", "10.19 d"),
+      bar("Ridge regression", 8.193, 12, "", "8.19 d"),
+    ].join("");
+
+    document.getElementById("acc").innerHTML = [
+      bar("Most common product", 15.04, 100, "quiet", "15.0%"),
+      bar("Repeat the latest product", 49.09, 100, "gold", "49.1%"),
+      bar("Softmax classifier", 77.94, 100, "", "77.9%"),
+    ].join("");
+
+    function decide(until) {
+      if (until >= -7 && until <= 5) return { state: "due_soon", status: "eligible", note: "Inside the window, from 7 days late to 5 days early." };
+      if (until < -10) return { state: "lapsed", status: "eligible", note: "More than 10 days past the predicted date." };
+      return { state: "not_due", status: "stay_quiet", note: "Outside both windows. Eight, nine, or ten days late also stays quiet." };
+    }
+
+    function render() {
+      const gap = Number(document.getElementById("gap").value);
+      const since = Number(document.getElementById("since").value);
+      const conf = Number(document.getElementById("conf").value);
+      const share = Number(document.getElementById("share").value);
+      const bucket = Number(document.getElementById("bucket").value);
+      const until = Math.round((gap - since) * 100) / 100;
+      const decision = decide(until);
+      const weight = decision.state === "lapsed" ? 1 : 0.8;
+      const score = Math.round((0.5 * weight + 0.3 * conf + 0.2 * share) * 10000) / 10000;
+      const holdout = decision.status === "eligible" && bucket < 20;
+      const product = conf >= 0.55 ? "use the model’s top product" : "confidence is under 0.55, so fall back to the latest or dominant in-stock product";
+      document.getElementById("math").textContent =
+        `days_until_due = ${gap} − ${since} = ${until}\n` +
+        `window check: ${decision.note}\n` +
+        `product: ${product}\n` +
+        `opportunity = 0.5×${weight} + 0.3×${conf} + 0.2×${share} = ${score}\n` +
+        `holdout bucket ${bucket} ${bucket < 20 ? "< 20, so hold out" : "≥ 20, so not a holdout"}`;
+      const box = document.getElementById("verdict");
+      let label = decision.status === "eligible" ? "Eligible on timing" : "Stay quiet";
+      let kind = decision.status === "eligible" ? "" : "quiet";
+      if (holdout) { label = "Holdout"; kind = "hold"; }
+      box.className = "result " + kind;
+      box.innerHTML = `<strong>${label} · ${decision.state.replaceAll("_", " ")}</strong><p>A queued email still requires stock, consent, no recent send, and a rank inside the top 250. This calculator only applies the timing window, the confidence fallback, the score, and the holdout bucket.</p>`;
+    }
+
+    ["gap", "since", "conf", "share", "bucket"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", render);
+    });
+    render();
+  </script>
+</body>
+</html>

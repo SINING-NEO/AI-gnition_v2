@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hackathon pitch · retention from orders already held</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e0d6c6;
+      --card: #fffdf8;
+      --green: #1d6b4a;
+      --green-soft: #e6f3ec;
+      --gold: #8a6420;
+      --gold-soft: #f6efdc;
+      --clay: #8f3d2b;
+      --clay-soft: #f8ebe6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    header, main { width: min(940px, calc(100% - 36px)); margin: 0 auto; }
+    header { padding: 40px 0 8px; }
+    h1, h2 { font-family: Georgia, "Iowan Old Style", Palatino, serif; font-weight: 500; letter-spacing: -0.03em; }
+    h1 { font-size: clamp(34px, 5.5vw, 50px); line-height: 1.06; margin: 0 0 14px; }
+    h2 { font-size: 28px; margin: 0 0 8px; }
+    h3 { margin: 0 0 6px; font-size: 17px; }
+    .kicker { margin: 0 0 12px; letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+    .lede { font-size: 20px; max-width: 70ch; }
+    a { color: var(--green); }
+    .muted { color: var(--muted); }
+    section { padding: 24px 0 4px; }
+    .rule { border: 0; border-top: 1px solid var(--line); margin: 24px 0 0; }
+    .grid, .grid-3 { display: grid; gap: 12px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .card p, .card li { color: var(--muted); }
+    .num { font-family: Georgia, serif; font-size: 32px; line-height: 1; color: var(--green); margin: 0 0 4px; }
+    .label { margin: 0 0 8px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; background: var(--card); }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    ul { margin: 8px 0 0; padding-left: 18px; }
+    footer { width: min(940px, calc(100% - 36px)); margin: 16px auto 36px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 800px) { .grid, .grid-3 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Hackathon pitch · three minutes</p>
+    <h1>Score with two small models. Let the stored records decide who may be contacted.</h1>
+    <p class="lede">A business already holds orders, consent, stock, and prices. We predict when a customer is due and for which product. Those predictions do not send the message. Consent, stock, and a holdout do. That is how a later repeat purchase can be traced to the conversation.</p>
+    <p><a href="judges.html">Judge briefing</a> · <a href="mvp-workflow.html">Formulas</a> · <a href="recommendation.html?t=669be7a354026e373a8b4c9083e8be9c">Uma’s page</a></p>
+  </header>
+  <main>
+    <section>
+      <h2>The business case</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Who it is for</h3>
+          <p>A retailer that already sells the same products again. Coffee, oat milk, honey. The first conversation is replenishment or a late restock, not a new kind of marketing.</p>
+        </article>
+        <article class="card">
+          <h3>What success is</h3>
+          <p>More repeat purchases within 14 days among people who were emailed than among a held-out group who were eligible and received nothing. Opens and clicks are not the result.</p>
+        </article>
+        <article class="card">
+          <h3>Why the first test adds no new discount</h3>
+          <p>A code that only the emailed group receives mixes two causes: a relevant reminder, and a cheaper price. The first read has to be timing and product, at the price already on the shelf.</p>
+        </article>
+        <article class="card">
+          <h3>What this demo already did</h3>
+          <p>3,000 fictional customers were scored. 250 drafts were queued for review. 209 eligible people were held out. 522 had no consent and were suppressed. No message was sent.</p>
+        </article>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>The two models that score the campaign</h2>
+      <p class="muted">Both were trained on fictional orders. Each customer sits entirely in train, validation, or test. The campaign loads the saved weights. It does not train while a person is being scored.</p>
+      <div class="grid" style="margin-top:12px">
+        <article class="card">
+          <p class="num">8.19 days</p>
+          <p class="label">Ridge regression · timing</p>
+          <p>Predicts days until the next purchase. On held-out fictional orders the error is 8.19 days, against 10.19 days if we use each person’s usual gap. This is classical machine learning: a closed-form linear model with a penalty. It is not a neural network.</p>
+        </article>
+        <article class="card">
+          <p class="label">Softmax classifier · product</p>
+          <p class="num">77.9%</p>
+          <p>Picks which of 12 products is next. It is logistic regression with one linear layer, trained for 48 epochs. It is right 77.9% of the time, and the right product is in the top 3 for 92.5%. “They will buy the same thing again” was right 49.1% of the time. There is no hidden layer, so this is not deep learning.</p>
+        </article>
+      </div>
+      <p class="muted">A two-layer neural network was trained earlier to see when learning beats a median gap. It helped when the last two products changed the timing. The campaign still uses ridge regression, because that model is explainable and already beat the median on this workbook.</p>
+    </section>
+
+    <section>
+      <h2>Records decide. The writer does not.</h2>
+      <p>The ridge model only answers “how many days?” The softmax model only answers “which product?” Both answers are computed from fields already stored for that customer: order dates, product IDs, quantities, and the train-set averages used to scale those fields. In this prototype those records are the workbook and the saved weight files. The row is the source of truth.</p>
+      <table>
+        <thead><tr><th>Check</th><th>Where it comes from</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>Consent</td><td>A stored flag</td><td>If it is false, the customer is suppressed. 522 people were.</td></tr>
+          <tr><td>Stock and price</td><td>Inventory and offer sheets</td><td>An out-of-stock prediction is replaced or dropped. Only an offer active on the as-of date can change the price.</td></tr>
+          <tr><td>Holdout</td><td>A bucket from the customer ID, stored with the decision</td><td>About 20% of eligible people get no message. The split happens before any send.</td></tr>
+          <tr><td>Wording</td><td>The approved brief</td><td>The draft may name only a product and a date that appear on that customer’s orders. No invented discount.</td></tr>
+        </tbody>
+      </table>
+      <p>An AI writer is a poor guard for those checks. It can say “your wool coat is due” when the orders show oat milk. It can email someone who never consented. It can put every likely buyer into the contacted group and leave the holdout empty, which makes the result look good and proves nothing. A stored field is either present or it is not, so the decision can be audited.</p>
+      <p class="muted">When a language model is added in MantaGO, it writes the sentence and reads the reply. It receives the brief the records already approved. It does not choose who is contacted.</p>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>Data security in this build</h2>
+      <div class="grid-3">
+        <article class="card">
+          <h3>No real customer file</h3>
+          <p>The 3,000 people, their orders, and the catalogue are synthetic. Demo addresses use the reserved <code>.example</code> domain and are not deliverable inboxes.</p>
+        </article>
+        <article class="card">
+          <h3>Least data in the message</h3>
+          <p>The queued email names the approved product and a landing token. It does not attach the order history, the model weights, or the consent flag.</p>
+        </article>
+        <article class="card">
+          <h3>The link hides the customer ID</h3>
+          <p>Uma’s page is opened with a token, not with her raw ID in the URL. These demo tokens are stable and are not production authentication. A live system needs signed links that expire.</p>
+        </article>
+        <article class="card">
+          <h3>Scoring is offline</h3>
+          <p>Training finishes before the campaign. Scoring reads saved weights and writes an auditable JSON queue. A page view does not retrain the model or call an external AI API.</p>
+        </article>
+        <article class="card">
+          <h3>Secrets stay off the repo</h3>
+          <p>A real test email needs SMTP settings in an uncommitted <code>.env</code>. The sender refuses the synthetic <code>.example</code> addresses and sends to one named test inbox only.</p>
+        </article>
+        <article class="card">
+          <h3>Nothing was transmitted</h3>
+          <p>The MantaGO payload is a local file. No chatbot credentials are stored. The campaign mode is review only: 250 drafts, zero sends.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>One line a judge can check</h2>
+      <table>
+        <thead><tr><th></th><th>Uma, C00018</th></tr></thead>
+        <tbody>
+          <tr><td>Prediction</td><td>32.86 days until the next purchase. Last order was 161 days ago, so she is lapsed. Next product Oat Milk 1L at 93.7% confidence.</td></tr>
+          <tr><td>Permission</td><td>Consent is true. Holdout bucket 83 is not under 20. Rank score 0.9146 is inside the top 250.</td></tr>
+          <tr><td>Result</td><td>A draft is queued: “Need help restocking Oat Milk 1L?” It was not sent.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>What we will not claim on stage</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>These numbers are not extra sales</h3>
+          <p>8.19 days and 77.9% measure prediction on fictional orders. Repeat purchase versus the holdout has not been counted, because nobody was emailed.</p>
+        </article>
+        <article class="card">
+          <h3>This is not a production security review</h3>
+          <p>The controls match a local demo: synthetic data, a review queue, one-recipient SMTP, and opaque demo tokens. Production still needs expiring links, access control, and a real unsubscribe path.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer>
+    Pitch source: campaign RET-20261020, <code>prediction/artifacts/metrics.json</code>, and <code>prediction/score_customers.py</code>. All demonstration data is synthetic.
+  </footer>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proposal for the judges</title>
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e0d6c6;
+      --card: #fffdf8;
+      --green: #1d6b4a;
+      --green-soft: #e6f3ec;
+      --gold: #8a6420;
+      --gold-soft: #f6efdc;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    header, main { width: min(920px, calc(100% - 36px)); margin: 0 auto; }
+    header { padding: 42px 0 10px; }
+    h1, h2 { font-family: Georgia, "Iowan Old Style", Palatino, serif; font-weight: 500; letter-spacing: -0.03em; }
+    h1 { font-size: clamp(36px, 6vw, 54px); line-height: 1.05; margin: 0 0 16px; }
+    h2 { font-size: 30px; margin: 0 0 8px; }
+    .kicker { margin: 0 0 12px; letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; color: var(--muted); }
+    .lede { font-size: 20px; max-width: 68ch; }
+    a { color: var(--green); }
+    .muted { color: var(--muted); }
+    section { padding: 26px 0 4px; }
+    .rule { border: 0; border-top: 1px solid var(--line); margin: 26px 0 0; }
+    .question {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--green);
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-family: Georgia, serif;
+      font-size: 22px;
+      line-height: 1.35;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .card h3 { margin: 0 0 6px; font-size: 16px; }
+    .card p, .step p { margin: 0; color: var(--muted); }
+    .num { font-family: Georgia, serif; font-size: 28px; color: var(--green); margin: 0; }
+    .label { margin: 0; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+    ol.process { list-style: none; margin: 14px 0 0; padding: 0; }
+    .step { display: grid; grid-template-columns: 42px 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+    .mark {
+      width: 28px; height: 28px; border-radius: 99px;
+      display: grid; place-items: center;
+      background: var(--green-soft); color: var(--green); font-size: 13px; font-weight: 700;
+    }
+    .mark.next { background: var(--gold-soft); color: var(--gold); }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 14px; overflow: hidden; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    footer { width: min(920px, calc(100% - 36px)); margin: 18px auto 40px; color: var(--muted); font-size: 14px; }
+    @media (max-width: 800px) {
+      .grid, .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">AI-gnition · proposal briefing</p>
+    <h1>Use the orders a business already has. Talk only when a product is due. Prove the conversation worked.</h1>
+    <p class="lede">We propose a retention system that predicts the next purchase from existing order history, then lets a separate set of rules decide who may be contacted. The conversation asks for one repeat purchase. A holdout group is how the effect gets measured.</p>
+    <p><a href="pitch.html">Hackathon pitch</a> · <a href="mvp-workflow.html">Calculations</a> · <a href="recommendation.html">Customer page</a> · <a href="workflow.html">First agent loop</a></p>
+  </header>
+  <main>
+    <section>
+      <p class="question">How might we turn the customer data a business already holds into personalised, automated conversations that measurably increase retention and repeat purchase?</p>
+    </section>
+
+    <section>
+      <h2>What we are proposing</h2>
+      <p>A shop already stores who bought what, and when. We use that history for two predictions: how many days until the next purchase, and which product that purchase is likely to be. Those predictions do not send the message. Consent, stock, a contact window, and a 20% holdout do.</p>
+      <div class="grid" style="margin-top:14px">
+        <article class="card">
+          <h3>The conversation</h3>
+          <p>One job per person. If they are due, ask them to repeat the product their history supports. If they are late, ask if they need help restocking it. The sentence may use only a product, a date, a price, and an offer that already exist in the records.</p>
+        </article>
+        <article class="card">
+          <h3>The proof</h3>
+          <p>Eligible customers are split before any send. About 80% can receive the message. About 20% are held out. After 14 days, repeat purchases in the two groups are compared. If they match, the conversation did not cause the purchase.</p>
+        </article>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>What the judges can treat as demonstrated</h2>
+      <div class="grid-3">
+        <article class="card">
+          <p class="num">8.19</p>
+          <p class="label">days of timing error</p>
+          <p>Ridge regression on held-out fictional orders. The same customers’ own median gap was 10.19 days.</p>
+        </article>
+        <article class="card">
+          <p class="num">77.9%</p>
+          <p class="label">next product correct</p>
+          <p>Softmax classifier, 12 products. Guessing “the same product again” was right 49.1% of the time.</p>
+        </article>
+        <article class="card">
+          <p class="num">250</p>
+          <p class="label">drafts ready to review</p>
+          <p>From 3,000 synthetic customers. 209 were held out. 522 had no consent and were suppressed. None were emailed.</p>
+        </article>
+      </div>
+      <p class="muted" style="margin-top:12px">The demonstration retailer is fictional, called Pantry &amp; Co. The workbook, the trained weights, the policy file, and the review queue are in the repository.</p>
+    </section>
+
+    <section>
+      <h2>The process we followed</h2>
+      <ol class="process">
+        <li class="step"><div class="mark">1</div><div><h3>Start from the question, not from a chatbot</h3><p>The required outcome is a measured repeat purchase. A general website chat does not use the orders the business already holds, and it does not create a comparison group.</p></div></li>
+        <li class="step"><div class="mark">2</div><div><h3>Test whether the data can support the idea</h3><p>On synthetic books, a “regular gap” rule still marked 39% of an irregular catalogue as if people were replenishing. Requiring a repeated product and a 14–45 day cycle kept 66.9% of a consumables mix and 0% of the irregular book.</p></div></li>
+        <li class="step"><div class="mark">3</div><div><h3>Make the model beat a simple rule</h3><p>A small network was useful when the last two products changed the gap. On a steady 28-day habit it was almost the same as the median. The later MVP therefore kept an interpretable ridge model and published both errors.</p></div></li>
+        <li class="step"><div class="mark">4</div><div><h3>Separate prediction from permission</h3><p>The model scores timing and product. Code checks consent, stock, cooldown, the due window, the holdout bucket, and a cap of 250. A critic rejects a product, date, or discount that is not in the brief.</p></div></li>
+        <li class="step"><div class="mark">5</div><div><h3>Build the path a customer would see</h3><p>The scoring run writes a review queue and a personal landing page: the in-stock reorder, an approved add-on if one exists, the current price, and links to FAQ and policies. The chat panel is a preview of the handover, not a live assistant.</p></div></li>
+        <li class="step"><div class="mark next">6</div><div><h3>Next, with a sponsor</h3><p>Replace the fictional FAQ, policies, and catalogue. Connect MantaGO so the conversation is grounded in those sources and can hand over to a person. Then run one consented holdout and read repeat purchases at 14 days.</p></div></li>
+      </ol>
+    </section>
+
+    <hr class="rule" />
+
+    <section>
+      <h2>One customer, end to end</h2>
+      <table>
+        <thead><tr><th>Step</th><th>Uma, C00018</th></tr></thead>
+        <tbody>
+          <tr><td>History</td><td>Six fictional orders. Last one was oat milk on 12 May 2026, 161 days before the as-of date.</td></tr>
+          <tr><td>Prediction</td><td>Next gap 32.86 days. Days until due = 32.86 − 161 = −128.14, so she is lapsed. Next product Oat Milk 1L, confidence 0.9374.</td></tr>
+          <tr><td>Permission</td><td>She consented. Her holdout bucket is 83, so she is not in the 20% holdout. Her rank score is 0.9146, inside the top 250.</td></tr>
+          <tr><td>Draft</td><td>“Need help restocking Oat Milk 1L?” The draft is queued for a person to review. It was not sent.</td></tr>
+          <tr><td>Page</td><td>Her token opens a local recommendation with the product that passed stock and offer checks.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>What we are not claiming</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>No measured sales lift yet</h3>
+          <p>The holdout is assigned and logged. There are no later purchases to compare, because no campaign was sent. The 8.19 days and 77.9% describe prediction quality, not incremental revenue.</p>
+        </article>
+        <article class="card">
+          <h3>No live conversation layer yet</h3>
+          <p>MantaGO is the planned place for the grounded reply and the human handover. The payload is prepared. It has not been transmitted, and the embedded chat is a demonstration.</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>How to inspect it</h2>
+      <table>
+        <thead><tr><th>Look at</th><th>What it shows</th></tr></thead>
+        <tbody>
+          <tr><td><a href="mvp-workflow.html">Calculations</a></td><td>The formulas, the 3,000-person outcome, and Uma’s arithmetic. A calculator reruns the timing window.</td></tr>
+          <tr><td><a href="recommendation.html?t=669be7a354026e373a8b4c9083e8be9c">Uma’s page</a></td><td>The customer view. Serve the folder with <code>python -m http.server 8000</code>, then open that link on localhost.</td></tr>
+          <tr><td><code>prediction/policy_config.json</code></td><td>The thresholds a judge can change without retraining: window, holdout, confidence, and the 250 cap.</td></tr>
+          <tr><td><code>prediction/campaign_output/campaign_summary.json</code></td><td>The review-only result: 250 queued, 209 holdout, 522 suppressed, no messages sent.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <footer>
+    All customers, orders, prices, and policies in this demonstration are synthetic. Campaign RET-20261020 was generated as a review queue on 20 October 2026.
+  </footer>
+</body>
+</html>
